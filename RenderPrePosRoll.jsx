@@ -16,7 +16,9 @@ var posShift = {
         y: 80
     }]
 }
-var onlyone = false;
+var onlyone = true;
+var outTmplt = "XDCAM HD 1080p25";
+var videoSuffix = ".mxf";
 
 for (var i=1; i <= app.project.numItems; i++) {
     var item = app.project.item(i);
@@ -120,7 +122,7 @@ function renderPreRuns(outpath) {
         if ( "id" in events[i] && "persons" in events[i] ) {
             var event = events[i];
             //if (event.id > 2010) break;
-            var outfile = new File(outpath + "/" + event.id + ".mxf");
+            var outfile = new File(outpath + "/" + event.id + videoSuffix);
             if (outfile.exists) {
                 $.writeln("Event " + event.id  + " allready rendered skipping ...");
                 continue;
@@ -130,7 +132,7 @@ function renderPreRuns(outpath) {
             var rqi = app.project.renderQueue.items.add(PreRoll);
             rqi.render = true;
             rqi.applyTemplate("Best Settings");
-            rqi.outputModule(1).applyTemplate("XDCAM HD 1080p25");
+            rqi.outputModule(1).applyTemplate(outTmplt);
             if (rqi.numOutputModels < 1) {
             }    
             rqi.outputModule(1).file = outfile;
