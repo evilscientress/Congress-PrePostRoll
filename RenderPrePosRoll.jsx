@@ -16,14 +16,13 @@ var posShift = {
         y: 80
     }]
 }
-var onlyone = true;
+var onlyone = false;
 var outTmplt = "XDCAM HD 1080p25";
 var videoSuffix = ".mxf";
 
 for (var i=1; i <= app.project.numItems; i++) {
     var item = app.project.item(i);
     if (item instanceof CompItem) {
-        $.writeln(item.name);
         if (item.name == "PreRoll") PreRoll = item;
         if (item.name == "PostRoll") PostRoll = item;
     }
@@ -64,12 +63,12 @@ function loadSchedule() {
             sfile.encoding = 'UTF-8';
             schedule = XML(sfile.read());
             if ("conference" in schedule && "title" in schedule.conference && "day" in schedule) {
-                $.writeln("Loaded frab schedule.xml for \"" + schedule.conference.title + "\" !");
+                //$.writeln("Loaded frab schedule.xml for \"" + schedule.conference.title + "\" !");
                 for (var i=0; i < schedule.day.length(); i++) {
-                    $.writeln("Loading Day: " + schedule.day[i].@index);
+                    //$.writeln("Loading Day: " + schedule.day[i].@index);
                     if ("room" in schedule.day.child(i)) {
                         for(var ii=0; ii < schedule.day[i].room.length(); ii++) {
-                             $.writeln("Loading Room: " + schedule.day[i].room[ii].@name);
+                             //$.writeln("Loading Room: " + schedule.day[i].room[ii].@name);
                             if ("@name" in schedule.day[i].room[ii] && "event" in schedule.day[i].room[ii]) {
                                 for (var iii=0; iii < schedule.day[i].room[ii].event.length(); iii++) {
                                     if ("title" in schedule.day[i].room[ii].event[iii]) {
@@ -89,8 +88,6 @@ function loadSchedule() {
                                                 } else {
                                                     e[prop] = event[prop].toString();
                                                 }
-                                                //$.write("Prop " + prop + ": ");
-                                                //$.writeln(e[prop]);
                                             }
                                         }
                                         
@@ -105,29 +102,27 @@ function loadSchedule() {
         }
     }
     //schedule parsed
-    $.writeln("Loaded " + events.length + " events from schedule.xml");
+    //$.writeln("Loaded " + events.length + " events from schedule.xml");
     return events;
 }
 
 function renderPreRuns(outpath) {
-    $.writeln("Starting Batch Render outputdir: " + outpath);
+    //$.writeln("Starting Batch Render outputdir: " + outpath);
     //disable all elements currently in the renerqueue
     for (var i = 1; i <= app.project.renderQueue.items; i++) {
         if (app.project.renderQueue.item(i).status !== RQItemStatus.DONE) {
             app.project.renderQueue.item(i).render = false;
-            $.writeln(app.project.renderQueue.item(i).status);
         }
     }
     for (var i in events) {
         if ( "id" in events[i] && "persons" in events[i] ) {
             var event = events[i];
-            //if (event.id > 2010) break;
             var outfile = new File(outpath + "/" + event.id + videoSuffix);
             if (outfile.exists) {
-                $.writeln("Event " + event.id  + " allready rendered skipping ...");
+                //$.writeln("Event " + event.id  + " allready rendered skipping ...");
                 continue;
             }
-            $.writeln("Rendering event " + event.id);
+            //$.writeln("Rendering event " + event.id);
             template(event);
             var rqi = app.project.renderQueue.items.add(PreRoll);
             rqi.render = true;
